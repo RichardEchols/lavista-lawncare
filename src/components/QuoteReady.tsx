@@ -1,19 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Copy, Check } from "lucide-react";
+import { ExternalLink, Copy, Check, Plus } from "lucide-react";
 import { useState } from "react";
 
 interface Props {
   quoteUrl: string;
+  onNewQuote?: () => void;
 }
 
-export default function QuoteReady({ quoteUrl }: Props) {
+export default function QuoteReady({ quoteUrl, onNewQuote }: Props) {
   const [copied, setCopied] = useState(false);
 
-  const fullUrl = typeof window !== "undefined"
-    ? `${window.location.origin}${quoteUrl}`
-    : quoteUrl;
+  const fullUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}${quoteUrl}`
+      : quoteUrl;
 
   const copyLink = () => {
     navigator.clipboard.writeText(fullUrl);
@@ -33,10 +35,12 @@ export default function QuoteReady({ quoteUrl }: Props) {
           <Check className="w-7 h-7 text-[#2d6a4f]" />
         </div>
         <h3 className="text-lg font-bold text-gray-900">Quote Ready!</h3>
-        <p className="text-sm text-gray-500 mt-1">Send this link to your customer</p>
+        <p className="text-sm text-gray-500 mt-1">
+          Send this link to your customer
+        </p>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 mb-3">
         <button
           onClick={copyLink}
           className="flex-1 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl
@@ -68,6 +72,18 @@ export default function QuoteReady({ quoteUrl }: Props) {
           View Quote
         </a>
       </div>
+
+      {onNewQuote && (
+        <button
+          onClick={onNewQuote}
+          className="w-full py-3 bg-[#f0faf4] text-[#2d6a4f] font-semibold rounded-xl
+            flex items-center justify-center gap-2 border border-[#b7e4c7]
+            hover:bg-[#d8f3dc] active:scale-[0.98] transition-all duration-150"
+        >
+          <Plus className="w-4 h-4" />
+          New Quote
+        </button>
+      )}
     </motion.div>
   );
 }

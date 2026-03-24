@@ -48,3 +48,15 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Ensure full-height on mobile */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#__next,
+main {
+  height: 100%;
+}

@@ -15,12 +15,28 @@ export interface ChatMessage {
   id: string;
   role: "assistant" | "user";
   content: string;
-  type?: "text" | "photos" | "services" | "price" | "business_name" | "quote_ready";
+  type?:
+    | "text"
+    | "photos"
+    | "services"
+    | "price"
+    | "business_name"
+    | "quote_ready"
+    | "paywall";
   photos?: string[];
   services?: string[];
   suggestedPrice?: number;
   quoteId?: string;
   quoteUrl?: string;
+}
+
+export interface LavistaUser {
+  id: string;
+  phone: string;
+  stripe_customer_id?: string;
+  plan: "free" | "per_quote" | "unlimited";
+  quotes_used: number;
+  created_at: string;
 }
 
 export const AVAILABLE_SERVICES = [
@@ -30,11 +46,12 @@ export const AVAILABLE_SERVICES = [
   "Cleanup",
   "Hedge Trimming",
   "Mulching",
-  "Leaf Removal",
-  "Weed Control",
-  "Fertilizing",
-  "Aeration",
-  "Other",
 ] as const;
 
 export type ServiceType = (typeof AVAILABLE_SERVICES)[number];
+
+// Stripe price IDs
+export const STRIPE_PRICES = {
+  PER_QUOTE: "price_1TEbsVDCKADIdNZnGvz3kyNK",
+  UNLIMITED: "price_1TEbsWDCKADIdNZn2ctBlGuv",
+} as const;

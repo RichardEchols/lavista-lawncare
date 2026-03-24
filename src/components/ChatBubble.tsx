@@ -21,15 +21,15 @@ export default function ChatBubble({ message }: { message: ChatMessage }) {
       className={`flex ${isUser ? "justify-end" : "justify-start"} gap-2`}
     >
       {!isUser && (
-        <div className="w-8 h-8 rounded-full bg-[#d8f3dc] flex items-center justify-center flex-shrink-0 mt-1">
-          <Leaf className="w-4 h-4 text-[#2d6a4f]" />
+        <div className="w-7 h-7 rounded-full bg-[#d8f3dc] flex items-center justify-center flex-shrink-0 mt-1">
+          <Leaf className="w-3.5 h-3.5 text-[#2d6a4f]" />
         </div>
       )}
       <div
-        className={`max-w-[85%] rounded-2xl px-4 py-3 text-[15px] leading-relaxed ${
+        className={`max-w-[82%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed ${
           isUser
-            ? "bg-[#2d6a4f] text-white rounded-tr-md"
-            : "bg-[#f0faf4] text-gray-800 rounded-tl-md"
+            ? "bg-[#2d6a4f] text-white rounded-br-md"
+            : "bg-[#f0faf4] text-gray-800 rounded-bl-md"
         }`}
       >
         {message.photos && message.photos.length > 0 && (

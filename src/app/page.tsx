@@ -1,384 +1,524 @@
 "use client";
 
-import { motion } from "framer-motion";
-import {
-  Camera,
-  MessageSquare,
-  DollarSign,
-  ArrowRight,
-  Leaf,
-  Sparkles,
-  Shield,
-  Zap,
-} from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Camera, Send, Leaf, ImagePlus, Info } from "lucide-react";
 import Link from "next/link";
+import { v4 as uuid } from "uuid";
+import ChatBubble from "@/components/ChatBubble";
+import ServiceSelector from "@/components/ServiceSelector";
+import PhotoUploader from "@/components/PhotoUploader";
+import PriceAdjuster from "@/components/PriceAdjuster";
+import BusinessNameInput from "@/components/BusinessNameInput";
+import QuoteReady from "@/components/QuoteReady";
+import PaywallCard from "@/components/PaywallCard";
+import TypingIndicator from "@/components/TypingIndicator";
+import type { ChatMessage, ServiceType } from "@/lib/types";
 
-const appleSpring = {
-  type: "spring" as const,
-  stiffness: 300,
-  damping: 30,
-};
+type Step =
+  | "welcome"
+  | "photos"
+  | "services"
+  | "analyzing"
+  | "price"
+  | "business_name"
+  | "generating"
+  | "done"
+  | "paywall";
 
-const stagger = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
+function getFreeQuoteUsed(): boolean {
+  if (typeof window === "undefined") return false;
+  return localStorage.getItem("lavista_free_used") === "true";
+}
+
+function markFreeQuoteUsed() {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("lavista_free_used", "true");
+  }
+}
+
+function getPaidSession(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("lavista_paid_session");
+}
+
+export default function ChatPage() {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [step, setStep] = useState<Step>("welcome");
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [selectedServices, setSelectedServices] = useState<ServiceType[]>([]);
+  const [suggestedPrice, setSuggestedPrice] = useState(0);
+  const [confirmedPrice, setConfirmedPrice] = useState(0);
+  const [quoteUrl, setQuoteUrl] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [textInput, setTextInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const scrollToBottom = useCallback(() => {
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  }, []);
+
+  const addMessage = useCallback((msg: Omit<ChatMessage, "id">) => {
+    const newMsg = { ...msg, id: uuid() };
+    setMessages((prev) => [...prev, newMsg]);
+    return newMsg;
+  }, []);
+
+  const addBotMessage = useCallback(
+    (content: string, extra?: Partial<ChatMessage>) => {
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        addMessage({ role: "assistant", content, ...extra });
+        scrollToBottom();
+      }, 600);
     },
-  },
-};
+    [addMessage, scrollToBottom]
+  );
 
-const fadeUp = {
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0, transition: appleSpring },
-};
+  // Welcome message
+  useEffect(() => {
+    if (messages.length === 0) {
+      // Check if returning from payment
+      const params = new URLSearchParams(window.location.search);
+      const paymentSuccess = params.get("payment") === "success";
 
-export default function LandingPage() {
+      if (paymentSuccess) {
+        const plan = params.get("plan");
+        // Store paid session
+        if (plan === "unlimited") {
+          localStorage.setItem("lavista_paid_session", "unlimited");
+        } else if (plan === "per_quote") {
+          localStorage.setItem("lavista_paid_session", "per_quote");
+        }
+        // Clear the URL params
+        window.history.replaceState({}, "", "/");
+        addBotMessage(
+          "Payment received! You're all set. Upload a photo of the yard and I'll help you create a quote."
+        );
+      } else {
+        addBotMessage(
+          "Hey! Upload a photo of the yard and I'll help you create a quote in seconds."
+        );
+      }
+      setStep("photos");
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping, scrollToBottom]);
+
+  // Check paywall before starting quote flow
+  const checkPaywall = (): boolean => {
+    const freeUsed = getFreeQuoteUsed();
+    const paidSession = getPaidSession();
+
+    if (!freeUsed) return false; // First quote is free
+    if (paidSession === "unlimited") return false; // Unlimited subscriber
+    if (paidSession === "per_quote") {
+      // Single quote paid — consume it
+      localStorage.removeItem("lavista_paid_session");
+      return false;
+    }
+
+    // Paywall
+    return true;
+  };
+
+  // Handle photo upload from the camera button in input bar
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const readers: Promise<string>[] = [];
+    Array.from(files).forEach((file) => {
+      readers.push(
+        new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        })
+      );
+    });
+
+    Promise.all(readers).then((results) => {
+      setPhotos((prev) => [...prev, ...results].slice(0, 3));
+    });
+
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  // Handle photo confirm
+  const handlePhotosConfirm = () => {
+    if (checkPaywall()) {
+      setStep("paywall");
+      addBotMessage(
+        "You've used your free quote! To keep generating quotes, choose a plan below."
+      );
+      return;
+    }
+
+    addMessage({
+      role: "user",
+      content: `Uploaded ${photos.length} photo${photos.length > 1 ? "s" : ""}`,
+      photos: photos,
+    });
+    setStep("services");
+    addBotMessage(
+      "What services are you providing? Select all that apply."
+    );
+  };
+
+  // Handle text message (skip photos)
+  const handleSendText = () => {
+    if (!textInput.trim()) return;
+
+    if (step === "photos") {
+      if (checkPaywall()) {
+        setStep("paywall");
+        addBotMessage(
+          "You've used your free quote! To keep generating quotes, choose a plan below."
+        );
+        return;
+      }
+    }
+
+    addMessage({ role: "user", content: textInput });
+    setTextInput("");
+
+    if (step === "photos") {
+      setStep("services");
+      addBotMessage(
+        "What services are you providing? Select all that apply."
+      );
+    }
+  };
+
+  // Handle service selection
+  const toggleService = (service: ServiceType) => {
+    setSelectedServices((prev) =>
+      prev.includes(service)
+        ? prev.filter((s) => s !== service)
+        : [...prev, service]
+    );
+  };
+
+  const handleServicesConfirm = async () => {
+    addMessage({
+      role: "user",
+      content: selectedServices.join(", "),
+    });
+    setStep("analyzing");
+
+    setIsTyping(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photos: photos,
+          services: selectedServices,
+          description: messages
+            .filter((m) => m.role === "user" && !m.photos)
+            .map((m) => m.content)
+            .join(" "),
+        }),
+      });
+
+      const data = await res.json();
+      setIsTyping(false);
+
+      const price = data.suggestedPrice || 75;
+      setSuggestedPrice(price);
+
+      addMessage({
+        role: "assistant",
+        content:
+          data.message ||
+          `Based on what I see, I'd suggest $${price}. Want to adjust?`,
+        suggestedPrice: price,
+      });
+
+      setStep("price");
+    } catch {
+      setIsTyping(false);
+      const fallbackPrice = selectedServices.length * 20 + 25;
+      setSuggestedPrice(fallbackPrice);
+      addMessage({
+        role: "assistant",
+        content: `Based on the ${selectedServices.length} services, I'd suggest $${fallbackPrice}. Want to adjust?`,
+        suggestedPrice: fallbackPrice,
+      });
+      setStep("price");
+    }
+
+    scrollToBottom();
+  };
+
+  // Handle price confirm
+  const handlePriceConfirm = (price: number) => {
+    setConfirmedPrice(price);
+    addMessage({ role: "user", content: `$${price} confirmed` });
+    setStep("business_name");
+    addBotMessage(
+      "What's your business name? This will appear on the quote."
+    );
+  };
+
+  // Handle business name
+  const handleBusinessName = async (name: string) => {
+    addMessage({ role: "user", content: name });
+    setStep("generating");
+
+    setIsTyping(true);
+
+    try {
+      const res = await fetch("/api/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          business_name: name,
+          services: selectedServices,
+          price: confirmedPrice * 100,
+          photos: photos,
+        }),
+      });
+
+      const data = await res.json();
+      setIsTyping(false);
+
+      if (data.id) {
+        const url = `/quote/${data.id}`;
+        setQuoteUrl(url);
+
+        // Mark free quote as used
+        markFreeQuoteUsed();
+
+        addMessage({
+          role: "assistant",
+          content:
+            "Here's your quote link! Send it to your customer.",
+          quoteId: data.id,
+          quoteUrl: url,
+        });
+        setStep("done");
+      } else {
+        addMessage({
+          role: "assistant",
+          content: "Something went wrong creating the quote. Try again.",
+        });
+        setStep("business_name");
+      }
+    } catch {
+      setIsTyping(false);
+      addMessage({
+        role: "assistant",
+        content: "Something went wrong. Please try again.",
+      });
+      setStep("business_name");
+    }
+
+    scrollToBottom();
+  };
+
+  // Start a new quote
+  const handleNewQuote = () => {
+    setPhotos([]);
+    setSelectedServices([]);
+    setSuggestedPrice(0);
+    setConfirmedPrice(0);
+    setQuoteUrl("");
+    setTextInput("");
+
+    if (checkPaywall()) {
+      setStep("paywall");
+      addBotMessage(
+        "You've used your free quote! To keep generating quotes, choose a plan below."
+      );
+    } else {
+      setStep("photos");
+      addBotMessage(
+        "Ready for another one! Upload a photo of the yard or describe the job."
+      );
+    }
+  };
+
+  // Handle paywall payment redirect
+  const handlePaywallSelect = async (plan: "per_quote" | "unlimited") => {
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      addBotMessage("Something went wrong. Please try again.");
+    }
+  };
+
+  const showInputBar = step === "photos" || step === "done";
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#40916c] to-[#2d6a4f] flex items-center justify-center">
-              <Leaf className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold text-[#2d6a4f] tracking-tight">
-              Lavista
-            </span>
+    <div className="h-full flex flex-col bg-white">
+      {/* Header — minimal */}
+      <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#40916c] to-[#2d6a4f] flex items-center justify-center">
+            <Leaf className="w-4 h-4 text-white" />
           </div>
-          <Link
-            href="/quote"
-            className="px-5 py-2.5 bg-[#2d6a4f] text-white text-sm font-semibold rounded-xl
-              transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]
-              hover:bg-[#40916c] active:scale-[0.98] shadow-lg shadow-[#2d6a4f]/20"
-          >
-            Start Quoting
-          </Link>
+          <span className="text-[17px] font-bold text-[#2d6a4f] tracking-tight">
+            Lavista Lawn Care
+          </span>
         </div>
-      </nav>
-
-      {/* Hero */}
-      <section className="pt-32 pb-20 md:pt-44 md:pb-32 px-6">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          variants={stagger}
-          initial="initial"
-          animate="animate"
+        <Link
+          href="/about"
+          className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#40916c] transition-colors duration-200"
         >
-          <motion.div variants={fadeUp} className="mb-6">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#d8f3dc] text-[#2d6a4f] text-sm font-semibold">
-              <Sparkles className="w-4 h-4" />
-              AI-Powered Quotes
-            </span>
-          </motion.div>
+          <Info className="w-4 h-4" />
+          <span>About</span>
+        </Link>
+      </div>
 
-          <motion.h1
-            variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,4.5rem)] font-bold leading-[1.08] tracking-tight text-gray-900 mb-6"
+      {/* Messages Area */}
+      <div
+        ref={chatRef}
+        className="flex-1 overflow-y-auto px-4 py-4 space-y-3 hide-scrollbar bg-gray-50/50"
+      >
+        {messages.map((msg) => (
+          <ChatBubble key={msg.id} message={msg} />
+        ))}
+
+        {isTyping && <TypingIndicator />}
+
+        {/* Interactive widgets */}
+        {step === "photos" && !isTyping && messages.length > 0 && photos.length > 0 && (
+          <PhotoUploader
+            photos={photos}
+            onAdd={(newPhotos) =>
+              setPhotos((prev) => [...prev, ...newPhotos].slice(0, 3))
+            }
+            onRemove={(i) =>
+              setPhotos((prev) => prev.filter((_, idx) => idx !== i))
+            }
+            onConfirm={handlePhotosConfirm}
+          />
+        )}
+
+        {step === "services" && !isTyping && (
+          <ServiceSelector
+            selected={selectedServices}
+            onToggle={toggleService}
+            onConfirm={handleServicesConfirm}
+          />
+        )}
+
+        {step === "price" && !isTyping && (
+          <PriceAdjuster
+            suggestedPrice={suggestedPrice}
+            onConfirm={handlePriceConfirm}
+          />
+        )}
+
+        {step === "business_name" && !isTyping && (
+          <BusinessNameInput onSubmit={handleBusinessName} />
+        )}
+
+        {step === "done" && quoteUrl && !isTyping && (
+          <QuoteReady quoteUrl={quoteUrl} onNewQuote={handleNewQuote} />
+        )}
+
+        {step === "paywall" && !isTyping && (
+          <PaywallCard onSelect={handlePaywallSelect} />
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Bar — iMessage style */}
+      {showInputBar && (
+        <div className="px-3 pb-[env(safe-area-inset-bottom,8px)] pt-2 bg-white border-t border-gray-100 flex-shrink-0">
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendText();
+            }}
+            className="flex items-center gap-2"
           >
-            Snap. Quote.
-            <br />
-            <span className="text-[#2d6a4f]">Get Paid.</span>
-          </motion.h1>
-
-          <motion.p
-            variants={fadeUp}
-            className="text-xl md:text-2xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed"
-          >
-            Take a picture of the yard. AI creates a professional quote.
-            Customer pays instantly. That simple.
-          </motion.p>
-
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/quote"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4
-                bg-[#2d6a4f] text-white text-lg font-semibold rounded-2xl
-                transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]
-                hover:bg-[#40916c] active:scale-[0.98]
-                shadow-xl shadow-[#2d6a4f]/25"
+            {/* Camera button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (fileRef.current) {
+                  fileRef.current.removeAttribute("capture");
+                  fileRef.current.click();
+                }
+              }}
+              className="w-10 h-10 rounded-full bg-[#2d6a4f] flex items-center justify-center
+                hover:bg-[#40916c] active:scale-[0.95] transition-all duration-150 flex-shrink-0"
             >
-              Start Your First Quote
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <span className="text-sm text-gray-400 font-medium">
-              Free to use. No signup.
-            </span>
-          </motion.div>
-        </motion.div>
-      </section>
+              <Camera className="w-5 h-5 text-white" />
+            </button>
 
-      {/* Phone Mockup / Chat Preview */}
-      <section className="pb-20 md:pb-32 px-6">
-        <motion.div
-          className="max-w-sm mx-auto"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={appleSpring}
-          viewport={{ once: true }}
-        >
-          <div className="bg-gray-50 rounded-[2rem] p-3 shadow-2xl shadow-black/10 border border-gray-200">
-            <div className="bg-white rounded-[1.5rem] overflow-hidden">
-              {/* Fake chat header */}
-              <div className="bg-[#2d6a4f] px-5 py-4 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <Leaf className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <div className="text-white font-semibold text-sm">Lavista AI</div>
-                  <div className="text-white/60 text-xs">Online</div>
-                </div>
-              </div>
-              {/* Fake messages */}
-              <div className="p-4 space-y-3">
-                <div className="flex gap-2">
-                  <div className="bg-[#f0faf4] text-[#2d6a4f] text-sm rounded-2xl rounded-tl-md px-4 py-2.5 max-w-[80%]">
-                    Welcome! Upload photos of the yard and I&apos;ll help you create
-                    a professional quote.
-                  </div>
-                </div>
-                <div className="flex justify-end">
-                  <div className="bg-[#2d6a4f] text-white text-sm rounded-2xl rounded-tr-md px-4 py-2.5">
-                    Mowing + Edging + Blowing
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <div className="bg-[#f0faf4] text-[#2d6a4f] text-sm rounded-2xl rounded-tl-md px-4 py-2.5 max-w-[80%]">
-                    Based on the yard size, I&apos;d suggest <strong>$85</strong>. Want to
-                    adjust?
-                  </div>
-                </div>
-              </div>
-              {/* Fake input */}
-              <div className="px-4 pb-4">
-                <div className="bg-gray-100 rounded-full px-4 py-3 text-sm text-gray-400">
-                  Type a message...
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
+            {/* Gallery button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (fileRef.current) {
+                  fileRef.current.removeAttribute("capture");
+                  fileRef.current.click();
+                }
+              }}
+              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center
+                hover:bg-gray-200 active:scale-[0.95] transition-all duration-150 flex-shrink-0"
+            >
+              <ImagePlus className="w-5 h-5 text-gray-500" />
+            </button>
 
-      {/* How it Works */}
-      <section className="py-20 md:py-32 px-6 bg-[#f0faf4]">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={appleSpring}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-4">
-              How It Works
-            </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              Three steps. Under a minute. From yard to payment.
-            </p>
-          </motion.div>
+            {/* Text input */}
+            <input
+              type="text"
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              placeholder={
+                step === "done"
+                  ? "Start a new quote..."
+                  : "Describe the yard..."
+              }
+              className="flex-1 px-4 py-2.5 bg-gray-100 rounded-full text-[15px] text-gray-900
+                placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#52b788]/30
+                transition-all duration-200"
+            />
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Camera,
-                title: "Upload Photos",
-                desc: "Snap a picture of the yard from the field. Or just describe the job.",
-                step: "1",
-              },
-              {
-                icon: MessageSquare,
-                title: "AI Creates Quote",
-                desc: "AI analyzes the photos, suggests a price, and generates a professional quote.",
-                step: "2",
-              },
-              {
-                icon: DollarSign,
-                title: "Get Paid",
-                desc: "Send the quote link to your customer. They pay instantly with a card.",
-                step: "3",
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={item.step}
-                className="relative bg-white rounded-2xl p-8 shadow-lg shadow-black/5 border border-gray-100"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ ...appleSpring, delay: i * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <div className="w-12 h-12 rounded-xl bg-[#d8f3dc] flex items-center justify-center mb-5">
-                  <item.icon className="w-6 h-6 text-[#2d6a4f]" />
-                </div>
-                <div className="absolute top-6 right-6 text-5xl font-bold text-[#b7e4c7]/40">
-                  {item.step}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-gray-500 leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+            {/* Send button */}
+            <button
+              type="submit"
+              disabled={!textInput.trim()}
+              className="w-10 h-10 rounded-full bg-[#2d6a4f] flex items-center justify-center
+                disabled:opacity-30 hover:bg-[#40916c] active:scale-[0.95]
+                transition-all duration-150 flex-shrink-0"
+            >
+              <Send className="w-4 h-4 text-white" />
+            </button>
+          </form>
         </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-20 md:py-32 px-6">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={appleSpring}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-4">
-              Built for Landscapers
-            </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              No more scribbling quotes on paper. No more chasing payments.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 gap-6">
-            {[
-              {
-                icon: Zap,
-                title: "60-Second Quotes",
-                desc: "From photo to professional quote faster than writing on a napkin.",
-              },
-              {
-                icon: Camera,
-                title: "AI Photo Analysis",
-                desc: "AI looks at the yard and suggests pricing based on size and condition.",
-              },
-              {
-                icon: DollarSign,
-                title: "Instant Payments",
-                desc: "Customers pay online with a card. Money hits your account fast.",
-              },
-              {
-                icon: Shield,
-                title: "Professional Look",
-                desc: "Branded quotes with your business name. Look bigger than you are.",
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                className="flex gap-4 p-6 rounded-2xl hover:bg-gray-50 transition-colors duration-200"
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ ...appleSpring, delay: i * 0.05 }}
-                viewport={{ once: true }}
-              >
-                <div className="w-10 h-10 rounded-lg bg-[#d8f3dc] flex items-center justify-center flex-shrink-0">
-                  <item.icon className="w-5 h-5 text-[#2d6a4f]" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
-                  <p className="text-gray-500 text-[15px] leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section className="py-20 md:py-32 px-6 bg-[#f0faf4]">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={appleSpring}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-4">
-              Simple Pricing
-            </h2>
-            <p className="text-lg text-gray-500 mb-12">
-              Free to create quotes. Only pay when you get paid.
-            </p>
-
-            <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl shadow-black/5 border border-gray-100 max-w-md mx-auto">
-              <div className="text-6xl font-bold text-[#2d6a4f] mb-2">Free</div>
-              <div className="text-gray-500 mb-8">to create unlimited quotes</div>
-              <div className="border-t border-gray-100 pt-6 space-y-4 text-left">
-                {[
-                  "Unlimited photo uploads",
-                  "AI-powered price suggestions",
-                  "Professional branded quotes",
-                  "Instant payment links",
-                  "Works on any phone",
-                ].map((f) => (
-                  <div key={f} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[#d8f3dc] flex items-center justify-center flex-shrink-0">
-                      <svg className="w-3 h-3 text-[#2d6a4f]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">{f}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-8 pt-6 border-t border-gray-100">
-                <div className="text-sm text-gray-400">
-                  Small processing fee on paid invoices
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 md:py-32 px-6">
-        <motion.div
-          className="max-w-3xl mx-auto text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={appleSpring}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-4">
-            Ready to get paid faster?
-          </h2>
-          <p className="text-lg text-gray-500 mb-10 max-w-lg mx-auto">
-            No signup. No credit card. Just open it and start quoting.
-          </p>
-          <Link
-            href="/quote"
-            className="inline-flex items-center gap-3 px-8 py-4
-              bg-[#2d6a4f] text-white text-lg font-semibold rounded-2xl
-              transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]
-              hover:bg-[#40916c] active:scale-[0.98]
-              shadow-xl shadow-[#2d6a4f]/25"
-          >
-            Start Your First Quote — Free
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </motion.div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-8 px-6 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#40916c] to-[#2d6a4f] flex items-center justify-center">
-              <Leaf className="w-3 h-3 text-white" />
-            </div>
-            <span className="text-sm font-semibold text-[#2d6a4f]">
-              Lavista Lawn Care
-            </span>
-          </div>
-          <p className="text-sm text-gray-400">
-            Built by RMDW LLC
-          </p>
-        </div>
-      </footer>
+      )}
     </div>
   );
 }
