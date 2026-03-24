@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export async function GET(
   _req: NextRequest,
@@ -7,6 +7,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const supabase = getSupabase();
 
     const { data, error } = await supabase
       .from("lavista_quotes")

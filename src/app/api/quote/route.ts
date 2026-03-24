@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
-import { stripe } from "@/lib/stripe";
+import { getSupabase } from "@/lib/supabase";
+import { getStripe } from "@/lib/stripe";
 import { v4 as uuid } from "uuid";
 
 export async function POST(req: NextRequest) {
@@ -9,28 +9,26 @@ export async function POST(req: NextRequest) {
     const { business_name, services, price, photos, customer_name } = body;
 
     const quoteId = uuid();
+    const supabase = getSupabase();
+    const stripe = getStripe();
 
     // Store photos as data URLs (up to ~3 photos)
-    // In production, you'd upload to storage
     const photoUrls = photos || [];
 
     // Create Stripe payment link
     let stripePaymentLink = "";
     try {
-      // Create a product for this quote
       const product = await stripe.products.create({
         name: `Lawn Care Service - ${business_name}`,
         description: services.join(", "),
       });
 
-      // Create a price for the product
       const stripePrice = await stripe.prices.create({
         product: product.id,
-        unit_amount: price, // already in cents
+        unit_amount: price,
         currency: "usd",
       });
 
-      // Create a payment link
       const paymentLink = await stripe.paymentLinks.create({
         line_items: [{ price: stripePrice.id, quantity: 1 }],
         metadata: {
@@ -47,7 +45,6 @@ export async function POST(req: NextRequest) {
       stripePaymentLink = paymentLink.url;
     } catch (stripeError) {
       console.error("Stripe error:", stripeError);
-      // Continue without payment link - quote still works
     }
 
     // Save to Supabase
@@ -65,7 +62,6 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Supabase error:", error);
-      // Even if Supabase fails, return the quote data so the user can still share
       return NextResponse.json({
         id: quoteId,
         stripe_payment_link: stripePaymentLink,

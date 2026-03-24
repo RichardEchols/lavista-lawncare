@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+function getAnthropic() {
+  return new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { photos, services, description } = body;
+    const anthropic = getAnthropic();
 
     // Build the message content
     const contentParts: Anthropic.ContentBlockParam[] = [];
