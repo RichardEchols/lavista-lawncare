@@ -1,0 +1,42 @@
+/* Lavista (10/27/2026): sales page for landscaper websites. Loader draws grass blades instead of the
+   template's growth rings; samples, pricing and FAQ blocks below. Tokens live in styles.css. */
+.lv-blades path{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:ring 1.3s var(--ease) forwards}
+.lv-blades path:nth-child(2){animation-delay:.1s}
+.lv-blades path:nth-child(3){animation-delay:.2s}
+.lv-blades path:nth-child(4){animation-delay:.32s}
+.lv-blades path:nth-child(5){animation-delay:.42s}
+.brand__word{font-family:var(--serif);font-weight:500;letter-spacing:.01em}
+
+.lv-num{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--amber);margin-bottom:22px}
+
+.lv-samples{display:grid;grid-template-columns:1fr;gap:56px 32px}
+@media(min-width:860px){.lv-samples{grid-template-columns:1fr 1fr}}
+.lv-sample{display:block}
+.lv-sample .frame{aspect-ratio:16/10;margin-bottom:22px;box-shadow:0 30px 80px -40px rgba(0,0,0,.8)}
+.lv-sample .frame img{object-position:top center}
+.lv-sample h3{font-family:var(--serif);font-size:clamp(28px,3vw,38px);line-height:1.08;margin:0 0 12px;transition:color .4s}
+.lv-sample:hover h3{color:var(--amber-2)}
+.lv-sample p{margin:0 0 18px;color:var(--bone-2);font-size:16px;max-width:52ch}
+
+.lv-price{display:grid;grid-template-columns:1fr;border:1px solid var(--line-2);background:var(--bark-2)}
+@media(min-width:900px){.lv-price{grid-template-columns:5fr 7fr}}
+.lv-price__main{padding:clamp(28px,4vw,56px);border-bottom:1px solid var(--line)}
+@media(min-width:900px){.lv-price__main{border-bottom:0;border-right:1px solid var(--line)}}
+.lv-price__fig{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:0 0 14px}
+.lv-price__fig b{font-family:var(--serif);font-weight:400;font-size:clamp(54px,6vw,84px);line-height:1;color:var(--bone)}
+.lv-price__fig span{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--bone-3)}
+.lv-price__main .btn{margin-top:22px}
+.lv-price__list{list-style:none;margin:0;padding:clamp(28px,4vw,56px);display:grid;gap:18px;align-content:center}
+.lv-price__list li{display:grid;grid-template-columns:22px 1fr;gap:14px;color:var(--bone-2);font-size:17px;line-height:1.45}
+.lv-price__list svg{width:18px;height:18px;color:var(--amber);margin-top:3px}
+
+.lv-faq{margin-top:clamp(56px,7vw,96px);border-top:1px solid var(--line)}
+.lv-faq details{border-bottom:1px solid var(--line)}
+.lv-faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:24px;padding:26px 0;font-family:var(--serif);font-size:clamp(22px,2.2vw,28px);line-height:1.2}
+.lv-faq summary::-webkit-details-marker{display:none}
+.lv-faq summary::after{content:"+";font-family:var(--mono);color:var(--amber);font-size:22px;transition:transform .3s}
+.lv-faq details[open] summary::after{transform:rotate(45deg)}
+.lv-faq p{margin:0 0 26px;color:var(--bone-2);max-width:68ch;font-size:16.5px}
+
+.field input::placeholder{color:var(--bone-3)}
+.band:not(.band--stats) .band__shade{background:radial-gradient(ellipse at center,rgba(12,17,13,.72) 0%,rgba(12,17,13,.5) 60%,rgba(12,17,13,.62) 100%)}

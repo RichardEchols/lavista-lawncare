@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join our crew · Red Clay Landscapes (sample site)</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/site.css">
+<style>
+:root{--display:"DM Serif Display",Georgia,serif;--display-weight:400;--body:"Manrope",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+--bg:#141110;--bg-alt:#1b1715;--ink:#f3ece4;--muted:#b6aa9d;--accent:#c4562f;--on-accent:#fff;--accent-ink:#e88a62;--card:#201b18;--input:#171312;
+--line:rgba(243,236,228,.1);--line-strong:rgba(243,236,228,.22);--bar:rgba(20,17,16,.94);--hero-shade:linear-gradient(95deg,rgba(14,10,8,.86) 0%,rgba(14,10,8,.55) 55%,rgba(14,10,8,.3) 100%);
+--kicker:#f0a37f;--radius:4px;--hire-bg:#c4562f;--hire-ink:#fff;--foot-bg:#0d0b0a;--foot-ink:#e9e0d5}
+.hire .btn{background:#141110}
+.projects{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+@media(min-width:900px){.projects{grid-template-columns:2fr 1fr 1fr;grid-template-rows:260px 260px}}
+.projects figure{margin:0;position:relative;overflow:hidden;border-radius:4px;aspect-ratio:4/3}
+@media(min-width:900px){.projects figure{aspect-ratio:auto}.projects figure:first-child{grid-row:span 2}}
+.projects img{width:100%;height:100%;object-fit:cover}
+.projects figcaption{position:absolute;left:0;right:0;bottom:0;padding:28px 16px 14px;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:14px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="sample-bar">Sample hiring page built by <a href="../../">Lavista</a>. Red Clay Landscapes is a made-up business.</div>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M4 33h32L26 14l-6 9-4-6z"/><circle cx="29" cy="9" r="3.4" fill="currentColor"/></svg>Red Clay Landscapes</a>
+    <a class="call" href="index.html"><span data-en>Back to site</span><span data-es>Volver al sitio</span></a>
+  </div>
+</header>
+
+<main class="join">
+  <div class="wrap">
+    <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">English</button><button type="button" data-lang="es" aria-pressed="false">Español</button></div>
+    <h1><span data-en>Join our crew.</span><span data-es>Únete a nuestro equipo.</span></h1>
+    <p class="muted" style="font-size:19px;margin:0"><span data-en>We are hiring hardscape installers and crew leads in Gwinnett County. Fill this in and we will text you, usually the same day.</span><span data-es>Estamos contratando instaladores de piedra y líderes de equipo en el condado de Gwinnett. Llena esto y te enviaremos un mensaje de texto, normalmente el mismo día.</span></p>
+    <ul class="perks">
+      <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg><span data-en>Paid weekly</span><span data-es>Pago semanal</span></li>
+      <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg><span data-en>Year-round work</span><span data-es>Trabajo todo el año</span></li>
+      <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg><span data-en>We provide the equipment</span><span data-es>Nosotros damos el equipo</span></li>
+      <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg><span data-en>Room to grow into crew lead</span><span data-es>Oportunidad de ser líder de equipo</span></li>
+    </ul>
+
+    <div class="apply js-sent">
+      <form data-demo>
+        <div class="row2">
+          <div class="field"><label for="j-name"><span data-en>Full name</span><span data-es>Nombre completo</span></label><input id="j-name" required autocomplete="name"></div>
+          <div class="field"><label for="j-phone"><span data-en>Phone (we text you)</span><span data-es>Teléfono (te enviamos texto)</span></label><input id="j-phone" type="tel" required autocomplete="tel"></div>
+        </div>
+        <div class="field"><label><span data-en>What can you do?</span><span data-es>¿Qué sabes hacer?</span></label>
+          <div class="checks">
+            <label><input type="checkbox"><span data-en>Mowing</span><span data-es>Cortar césped</span></label>
+            <label><input type="checkbox"><span data-en>Trimming and edging</span><span data-es>Recortar y bordear</span></label>
+            <label><input type="checkbox"><span data-en>Pine straw and mulch</span><span data-es>Paja de pino y mantillo</span></label>
+            <label><input type="checkbox"><span data-en>Hardscape</span><span data-es>Piedra y patios</span></label>
+            <label><input type="checkbox"><span data-en>Drive a truck and trailer</span><span data-es>Manejar camioneta con tráiler</span></label>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="j-years"><span data-en>Years of experience</span><span data-es>Años de experiencia</span></label>
+            <select id="j-years" required><option value="" disabled selected>Choose / Elegir</option><option>0</option><option>1 to 2</option><option>3 to 5</option><option>6+</option></select></div>
+          <div class="field"><label for="j-start"><span data-en>When can you start?</span><span data-es>¿Cuándo puedes empezar?</span></label>
+            <select id="j-start" required><option value="" disabled selected>Choose / Elegir</option><option>This week / Esta semana</option><option>Next week / La próxima semana</option><option>In 2+ weeks / En 2+ semanas</option></select></div>
+        </div>
+        <div class="field"><label for="j-ride"><span data-en>Do you have a ride to work?</span><span data-es>¿Tienes cómo llegar al trabajo?</span></label>
+          <select id="j-ride" required><option value="" disabled selected>Choose / Elegir</option><option>Yes / Sí</option><option>No</option></select></div>
+        <button class="btn" type="submit" style="width:100%"><span data-en>Send my application</span><span data-es>Enviar mi solicitud</span></button>
+        <p class="fine"><span data-en>Sample page: this form shows the confirmation without sending anything.</span><span data-es>Página de ejemplo: este formulario no envía nada.</span></p>
+      </form>
+      <div class="done"><b><span data-en>Application sent.</span><span data-es>Solicitud enviada.</span></b><span class="muted"><span data-en>On a real site, the owner gets this as a text right now, with your answers.</span><span data-es>En un sitio real, el dueño recibe esto como texto ahora mismo, con tus respuestas.</span></span></div>
+    </div>
+  </div>
+</main>
+
+<footer class="foot"><div class="wrap"><p class="made" style="border:0;padding:0">Sample hiring page built by Lavista. Red Clay Landscapes is made up. © <span id="year">2026</span></p></div></footer>
+<script src="../shared/site.js"></script>
+</body>
+</html>

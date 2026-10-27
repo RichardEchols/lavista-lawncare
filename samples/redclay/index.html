@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red Clay Landscapes · Patios, walls and yard installs in Gwinnett (sample site)</title>
+<meta name="description" content="Sample site by Lavista. Patios, retaining walls, outdoor kitchens, sod and drainage for homes in Lawrenceville, Duluth, Snellville and Suwanee.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/site.css">
+<style>
+:root{--display:"DM Serif Display",Georgia,serif;--display-weight:400;--body:"Manrope",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+--bg:#141110;--bg-alt:#1b1715;--ink:#f3ece4;--muted:#b6aa9d;--accent:#c4562f;--on-accent:#fff;--accent-ink:#e88a62;--card:#201b18;--input:#171312;
+--line:rgba(243,236,228,.1);--line-strong:rgba(243,236,228,.22);--bar:rgba(20,17,16,.94);--hero-shade:linear-gradient(95deg,rgba(14,10,8,.86) 0%,rgba(14,10,8,.55) 55%,rgba(14,10,8,.3) 100%);
+--kicker:#f0a37f;--radius:4px;--hire-bg:#c4562f;--hire-ink:#fff;--foot-bg:#0d0b0a;--foot-ink:#e9e0d5}
+.hire .btn{background:#141110}
+.projects{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+@media(min-width:900px){.projects{grid-template-columns:2fr 1fr 1fr;grid-template-rows:260px 260px}}
+.projects figure{margin:0;position:relative;overflow:hidden;border-radius:4px;aspect-ratio:4/3}
+@media(min-width:900px){.projects figure{aspect-ratio:auto}.projects figure:first-child{grid-row:span 2}}
+.projects img{width:100%;height:100%;object-fit:cover}
+.projects figcaption{position:absolute;left:0;right:0;bottom:0;padding:28px 16px 14px;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:14px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="sample-bar">Sample site built by <a href="../../">Lavista</a>. Red Clay Landscapes is a made-up business.</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top"><svg viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M4 33h32L26 14l-6 9-4-6z"/><circle cx="29" cy="9" r="3.4" fill="currentColor"/></svg>Red Clay Landscapes</a>
+    <nav aria-label="Main"><a href="#services">What we build</a><a href="#projects">Projects</a><a href="#process">Process</a><a href="join.html">Careers</a></nav>
+    <a class="call" href="tel:+17705550188"><svg viewBox="0 0 16 16"><path fill="currentColor" d="M3.6 1.5l2.2 2.6-1 1.7a8.4 8.4 0 004.4 4.4l1.7-1 2.6 2.2-1 2.1c-5.9.4-10.6-4.3-10.2-10.2z"/></svg>(770) 555-0188</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="hero__img"><img src="img/hero.jpg" alt="A stone patio with an outdoor kitchen and planting beds" fetchpriority="high"></div>
+  <div class="wrap">
+    <div>
+      <span class="kicker">Hardscapes &amp; landscape installs · Gwinnett County</span>
+      <h1>Outdoor spaces built to last a lifetime.</h1>
+      <p class="sub">Patios, retaining walls, outdoor kitchens and full yard installs, designed with you and built by our own crew. Fixed prices in writing before we break ground.</p>
+      <a class="btn" href="#quote">Request a design visit</a>
+      <ul class="trust">
+        <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg>Fixed price in writing</li>
+        <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg>Our own crew, never subcontracted</li>
+        <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg>3D design before we build</li>
+      </ul>
+    </div>
+    <div class="quote js-sent" id="quote">
+      <h2>Request a design visit</h2>
+      <p class="muted">We come out, measure, and talk through ideas and budget. No charge.</p>
+      <form data-demo>
+        <div class="row2">
+          <div class="field"><label for="q-name">Name</label><input id="q-name" required autocomplete="name"></div>
+          <div class="field"><label for="q-phone">Phone</label><input id="q-phone" type="tel" required autocomplete="tel"></div>
+        </div>
+        <div class="field"><label for="q-addr">Address</label><input id="q-addr" required autocomplete="street-address"></div>
+        <div class="row2">
+          <div class="field"><label for="q-svc">Project</label>
+            <select id="q-svc" required><option value="" disabled selected>Choose one</option><option>Patio or walkway</option><option>Retaining wall</option><option>Outdoor kitchen or fire pit</option><option>Sod or drainage</option><option>Full yard design</option></select></div>
+          <div class="field"><label for="q-budget">Budget</label>
+            <select id="q-budget" required><option value="" disabled selected>Choose a range</option><option>Under $10,000</option><option>$10,000 to $25,000</option><option>$25,000 to $50,000</option><option>Over $50,000</option></select></div>
+        </div>
+        <button class="btn" type="submit">Request my visit</button>
+        <p class="fine">Sample site: this form shows the confirmation without sending anything.</p>
+      </form>
+      <div class="done"><b>Request received.</b><span class="muted">On a real site, the owner gets this as a text right now, with the project and budget.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="services">
+  <div class="wrap">
+    <div class="head"><h2>What we build.</h2><p>Every project starts with a visit and a drawing, and ends with a walk-through so you know exactly what you got.</p></div>
+    <div class="services">
+      <article class="svc"><img src="img/patio.jpg" alt="A flagstone patio in a garden" loading="lazy"><div><h3>Patios and walkways</h3><p>Pavers, flagstone and natural stone, on a compacted base that will not shift or sink.</p><span class="tag">Most requested</span></div></article>
+      <article class="svc"><img src="img/wall.jpg" alt="A paver walkway beside a stone house" loading="lazy"><div><h3>Retaining walls</h3><p>Block and stone walls that hold back Georgia clay, with drainage built in from day one.</p></div></article>
+      <article class="svc"><img src="img/kitchen.jpg" alt="A backyard patio with seating" loading="lazy"><div><h3>Outdoor kitchens and fire pits</h3><p>Grill stations, counters and fire features built into your patio, ready for real use.</p></div></article>
+      <article class="svc"><img src="img/sod.jpg" alt="A wide new lawn behind a home" loading="lazy"><div><h3>Sod and grading</h3><p>Bermuda and zoysia sod, laid on a graded, prepared base so it takes root fast.</p></div></article>
+      <article class="svc"><img src="img/plant.jpg" alt="Planting a young tree" loading="lazy"><div><h3>Planting and beds</h3><p>Trees, shrubs and beds chosen for our heat and our clay, so they are still thriving in five years.</p></div></article>
+      <article class="svc"><img src="img/walk.jpg" alt="A clean paver path between hedges" loading="lazy"><div><h3>Drainage fixes</h3><p>French drains, dry creek beds and downspout lines that move water away from your foundation.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="s s--alt" id="projects">
+  <div class="wrap">
+    <div class="head"><h2>Recent work.</h2><p>On a live site, this is the owner's own project photos, updated as jobs finish.</p></div>
+    <div class="projects">
+      <figure><img src="img/hero.jpg" alt="Patio and outdoor kitchen" loading="lazy"><figcaption>Patio and outdoor kitchen</figcaption></figure>
+      <figure><img src="img/patio.jpg" alt="Flagstone patio" loading="lazy"><figcaption>Flagstone patio</figcaption></figure>
+      <figure><img src="img/wall.jpg" alt="Paver walkway" loading="lazy"><figcaption>Paver walkway</figcaption></figure>
+      <figure><img src="img/kitchen.jpg" alt="Backyard seating area" loading="lazy"><figcaption>Seating area</figcaption></figure>
+      <figure><img src="img/sod.jpg" alt="New sod install" loading="lazy"><figcaption>Sod install</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="process">
+  <div class="wrap">
+    <div class="head"><h2>How a project works.</h2></div>
+    <div class="steps3">
+      <div class="step3"><b>Design visit</b><p>We measure, listen, and talk budget honestly. You get a drawing and a fixed price in writing.</p></div>
+      <div class="step3"><b>Build</b><p>Our crew builds it start to finish. You get a text at the start and end of every day.</p></div>
+      <div class="step3"><b>Walk-through</b><p>We walk it with you, fix anything you want changed, and leave care instructions.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s s--alt">
+  <div class="wrap">
+    <div class="reviews">
+      <span class="stars" aria-hidden="true">★★★★★</span>
+      <b>Your real Google reviews show here.</b>
+      <span class="muted">On a live site, this section pulls in the owner's actual Google reviews. We never write reviews for anyone.</span>
+    </div>
+  </div>
+</section>
+
+<section class="s">
+  <div class="wrap">
+    <div class="hire">
+      <div><h2>Build with us.</h2><p>Hiring hardscape installers and crew leads. Year-round work, paid weekly. Apply in English or Spanish.</p></div>
+      <a class="btn" href="join.html">See open jobs</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div><b style="font-family:var(--display);font-size:22px">Red Clay Landscapes</b><p style="margin:8px 0 0;opacity:.8">Hardscapes and landscape installs for homes in Gwinnett County, Georgia.</p></div>
+    <div><h4>Contact</h4><ul><li><a href="tel:+17705550188">(770) 555-0188</a></li><li><a href="#quote">Request a design visit</a></li></ul></div>
+    <div><h4>Company</h4><ul><li><a href="#projects">Projects</a></li><li><a href="join.html">Careers</a></li></ul></div>
+    <p class="made">Sample site built by Lavista, websites for landscapers. Red Clay Landscapes and its phone number are made up. © <span id="year">2026</span></p>
+  </div>
+</footer>
+<script src="../shared/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sweetgum Lawn Co. · Lawn care in DeKalb County (sample site)</title>
+<meta name="description" content="Sample site by Lavista. Weekly mowing, pine straw, aeration and leaf cleanup for homes in Decatur, Tucker and Clarkston.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/site.css">
+<style>
+:root{--display:"Bricolage Grotesque",system-ui,sans-serif;--display-weight:700;--body:"Figtree",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+--bg:#f7f6ef;--bg-alt:#eef0e3;--ink:#16210f;--muted:#5a6452;--accent:#2f7d32;--on-accent:#fff;--accent-ink:#2f7d32;--card:#fff;--input:#fff;
+--line:rgba(22,33,15,.1);--line-strong:rgba(22,33,15,.22);--bar:rgba(247,246,239,.94);--hero-shade:linear-gradient(95deg,rgba(9,22,7,.82) 0%,rgba(9,22,7,.5) 55%,rgba(9,22,7,.25) 100%);
+--kicker:#c3ee9b;--radius:10px;--hire-bg:#16210f;--hire-ink:#f3f5ea;--foot-bg:#0f1a0b;--foot-ink:#e6ecdc}
+</style>
+</head>
+<body>
+<div class="sample-bar">Sample site built by <a href="../../">Lavista</a>. Sweetgum Lawn Co. is a made-up business.</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top"><svg viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M20 3l4.6 7.4 8.3-2.2-2.2 8.3L38 20l-7.3 3.5 2.2 8.3-8.3-2.2L20 37l-4.6-7.4-8.3 2.2 2.2-8.3L2 20l7.3-3.5-2.2-8.3 8.3 2.2z"/><path d="M20 37V22" stroke="#f7f6ef" stroke-width="2"/></svg>Sweetgum Lawn Co.</a>
+    <nav aria-label="Main"><a href="#services">Services</a><a href="#how">How it works</a><a href="#area">Service area</a><a href="join.html">Join our crew</a></nav>
+    <a class="call" href="tel:+14045550123"><svg viewBox="0 0 16 16"><path fill="currentColor" d="M3.6 1.5l2.2 2.6-1 1.7a8.4 8.4 0 004.4 4.4l1.7-1 2.6 2.2-1 2.1c-5.9.4-10.6-4.3-10.2-10.2z"/></svg>(404) 555-0123</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="hero__img"><img src="img/hero.jpg" alt="A freshly striped lawn in front of a brick home" fetchpriority="high"></div>
+  <div class="wrap">
+    <div>
+      <span class="kicker">Lawn care · Decatur · Tucker · Clarkston</span>
+      <h1>The yard you want, without giving up your Saturday.</h1>
+      <p class="sub">Weekly and every-other-week mowing, pine straw, aeration and fall cleanups for homes across DeKalb County. Same crew, same day, every visit.</p>
+      <a class="btn" href="#quote">Get a free quote</a>
+      <ul class="trust">
+        <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg>Quotes within one day</li>
+        <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg>Same crew every visit</li>
+        <li><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2"/></svg>No contracts</li>
+      </ul>
+    </div>
+    <div class="quote js-sent" id="quote">
+      <h2>Free quote</h2>
+      <p class="muted">Tell us about your yard. We text you a price, usually the same day.</p>
+      <form data-demo>
+        <div class="row2">
+          <div class="field"><label for="q-name">Name</label><input id="q-name" required autocomplete="name"></div>
+          <div class="field"><label for="q-phone">Phone</label><input id="q-phone" type="tel" required autocomplete="tel"></div>
+        </div>
+        <div class="field"><label for="q-addr">Address</label><input id="q-addr" required autocomplete="street-address"></div>
+        <div class="field"><label for="q-svc">What do you need?</label>
+          <select id="q-svc" required><option value="" disabled selected>Choose a service</option><option>Weekly mowing</option><option>Every-other-week mowing</option><option>Pine straw or mulch</option><option>Aeration and seeding</option><option>Leaf cleanup</option><option>Something else</option></select>
+        </div>
+        <button class="btn" type="submit">Send my request</button>
+        <p class="fine">Sample site: this form shows the confirmation without sending anything.</p>
+      </form>
+      <div class="done"><b>Got it. Thank you.</b><span class="muted">On a real site, the owner gets this request as a text right now.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="services">
+  <div class="wrap">
+    <div class="head"><h2>Everything your yard needs, all year.</h2><p>Pick one service or let us handle the whole yard. Every visit ends with the walks blown clean.</p></div>
+    <div class="services">
+      <article class="svc"><img src="img/mow.jpg" alt="A mower on a green lawn" loading="lazy"><div><h3>Mowing and edging</h3><p>Weekly or every other week, March through November. Mow, edge, trim and blow, every time.</p><span class="tag">Most popular</span></div></article>
+      <article class="svc"><img src="img/straw.jpg" alt="Fresh pine straw in a bed" loading="lazy"><div><h3>Pine straw and mulch</h3><p>Fresh beds in spring and fall. Delivered, spread and tucked so it looks finished.</p><span class="tag">Spring and fall</span></div></article>
+      <article class="svc"><img src="img/seed.jpg" alt="A thick, healthy lawn" loading="lazy"><div><h3>Aeration and seeding</h3><p>The fall reset for thin, worn lawns. Core aeration and overseeding for thicker grass by spring.</p><span class="tag">Best in fall</span></div></article>
+      <article class="svc"><img src="img/leaves.jpg" alt="Raking autumn leaves" loading="lazy"><div><h3>Leaf cleanup</h3><p>One big cleanup or every two weeks through the season. Beds, gutters and lawn cleared.</p><span class="tag">October to December</span></div></article>
+      <article class="svc"><img src="img/hedge.jpg" alt="Trimming a hedge" loading="lazy"><div><h3>Shrub trimming</h3><p>Clean shapes on hedges and shrubs, two or three times a year, clippings hauled away.</p></div></article>
+      <article class="svc"><img src="img/edge.jpg" alt="Edging a lawn with a string trimmer" loading="lazy"><div><h3>One-time cleanups</h3><p>Moving in, selling, or just behind? We get an overgrown yard back in shape in one visit.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="s s--alt" id="how">
+  <div class="wrap">
+    <div class="head"><h2>Easy from the first text.</h2></div>
+    <div class="steps3">
+      <div class="step3"><b>Ask for a quote</b><p>Fill in the form or call. We look at your yard on the map and text you a price.</p></div>
+      <div class="step3"><b>Pick your day</b><p>Same crew, same day each week. You do not need to be home.</p></div>
+      <div class="step3"><b>Pay by card</b><p>Billed after each visit. Pause or cancel anytime with a text.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="area">
+  <div class="wrap split">
+    <div>
+      <div class="head" style="margin-bottom:0"><h2>Serving DeKalb County.</h2><p>We keep our routes tight so we show up on time. If you are near any of these, you are on our route.</p></div>
+      <ul class="towns"><li>Decatur</li><li>Tucker</li><li>Clarkston</li><li>Scottdale</li><li>North Druid Hills</li><li>Avondale Estates</li><li>Stone Mountain</li></ul>
+    </div>
+    <img src="img/crew.jpg" alt="A lawn crew at work" loading="lazy">
+  </div>
+</section>
+
+<section class="s s--alt">
+  <div class="wrap">
+    <div class="reviews">
+      <span class="stars" aria-hidden="true">★★★★★</span>
+      <b>Your real Google reviews show here.</b>
+      <span class="muted">On a live site, this section pulls in the owner's actual Google reviews. We never write reviews for anyone.</span>
+    </div>
+  </div>
+</section>
+
+<section class="s">
+  <div class="wrap">
+    <div class="hire">
+      <div><h2>Now hiring crew members.</h2><p>Steady weekly routes, paid every Friday. Apply in two minutes, in English or Spanish.</p></div>
+      <a class="btn" href="join.html">Join our crew</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div><b style="font-family:var(--display);font-size:20px">Sweetgum Lawn Co.</b><p style="margin:8px 0 0;opacity:.8">Lawn care for homes in DeKalb County, Georgia.</p></div>
+    <div><h4>Contact</h4><ul><li><a href="tel:+14045550123">(404) 555-0123</a></li><li><a href="#quote">Free quote</a></li></ul></div>
+    <div><h4>Company</h4><ul><li><a href="#services">Services</a></li><li><a href="join.html">Join our crew</a></li></ul></div>
+    <p class="made">Sample site built by Lavista, websites for landscapers. Sweetgum Lawn Co. and its phone number are made up. © <span id="year">2026</span></p>
+  </div>
+</footer>
+<script src="../shared/site.js"></script>
+</body>
+</html>
