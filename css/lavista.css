@@ -40,3 +40,7 @@
 
 .field input::placeholder{color:var(--bone-3)}
 .band:not(.band--stats) .band__shade{background:radial-gradient(ellipse at center,rgba(12,17,13,.72) 0%,rgba(12,17,13,.5) 60%,rgba(12,17,13,.62) 100%)}
+.lv-rmdw{display:inline-flex;align-items:center;gap:16px;margin:26px 0 22px;color:var(--bone);transition:opacity .3s}
+.lv-rmdw:hover{opacity:.8}
+.lv-rmdw img{width:58px;height:auto;display:block}
+.lv-rmdw span{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase}
